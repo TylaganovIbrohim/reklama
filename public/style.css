@@ -233,12 +233,22 @@ section { padding: 3.5rem 1.25rem; max-width: 540px; margin: 0 auto; }
     margin-bottom: 0.5rem; overflow: hidden;
     background: rgba(255,255,255,0.03);
     position: relative;
+    display: flex; align-items: center; justify-content: center;
 }
 .product-img img {
     width: 100%; height: 100%; object-fit: cover;
     display: block; transition: transform 0.5s ease;
 }
 .product-card:active .product-img img { transform: scale(1.08); }
+
+/* Заглушка если фото не загрузилось */
+.product-img.no-img { background: linear-gradient(135deg, color-mix(in srgb, var(--theme-accent) 25%, transparent), transparent); }
+.product-img.no-img img { display: none; }
+.product-img.no-img::after {
+    content: "ФОТО";
+    font-size: 0.6rem; letter-spacing: 0.2em;
+    color: var(--text-muted); font-weight: 700;
+}
 
 .product-name {
     font-size: 0.8rem; font-weight: 700;
@@ -258,31 +268,54 @@ section { padding: 3.5rem 1.25rem; max-width: 540px; margin: 0 auto; }
 .product-card:nth-child(5) { animation-delay: 0.25s; }
 .product-card:nth-child(6) { animation-delay: 0.3s; }
 
-/* === THEME SPECIFIC STYLES === */
-
-/* Ice Cream Theme */
-.modal.theme-icecream .mini-header h3 {
-    text-shadow: 0 0 20px rgba(244, 114, 182, 0.5);
+/* =========================================
+   ТЕМА: МОРОЖЕНОЕ (СВЕТЛАЯ + СНЕЖИНКИ)
+   ========================================= */
+.modal.theme-icecream {
+    --surface: rgba(255, 255, 255, 0.65);
+    --border: rgba(236, 72, 153, 0.18);
+    --text: #55224a;
+    --text-muted: #a0688c;
+    background: linear-gradient(180deg, #fff7fb 0%, #ffe8f3 60%, #ffe0ee 100%);
 }
+.modal.theme-icecream .mini-header h3 {
+    text-shadow: 0 0 20px rgba(244, 114, 182, 0.35);
+}
+.modal.theme-icecream .mini-header input { color: #55224a; background: rgba(255,255,255,0.85); }
+.modal.theme-icecream .mini-header input::placeholder { color: #a0688c; }
+.modal.theme-icecream .modal-close { color: #55224a; background: rgba(255,255,255,0.85); }
+.modal.theme-icecream .menu-btn { background: rgba(255,255,255,0.75); }
+.modal.theme-icecream .menu-btn.active { color: #fff; }
+.modal.theme-icecream .product-card { background: rgba(255,255,255,0.8); }
 .modal.theme-icecream .product-card::before {
     content: '';
     position: absolute; inset: 0;
-    background: radial-gradient(circle at 50% 0%, rgba(244, 114, 182, 0.1), transparent 70%);
+    background: radial-gradient(circle at 50% 0%, rgba(244, 114, 182, 0.12), transparent 70%);
     pointer-events: none;
 }
+.modal.theme-icecream .product-img { background: rgba(85, 34, 74, 0.05); }
 
-/* Cafe Theme */
+/* =========================================
+   ТЕМА: КАФЕ (КОФЕЙНАЯ ПАЛИТРА + ЗЁРНА)
+   ========================================= */
+.modal.theme-cafe {
+    background: radial-gradient(circle at 50% 0%, #2a1710 0%, #150b07 60%);
+}
 .modal.theme-cafe .mini-header h3 {
     font-family: 'Manrope', sans-serif;
     text-transform: none;
-    letter-spacing: 0;
-    text-shadow: 0 0 20px rgba(251, 146, 60, 0.5);
+    letter-spacing: 0.02em;
+    background: linear-gradient(180deg, #ffffff 0%, #e6cbb4 45%, #a9744f 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+    animation: fadeSlideDown 0.5s ease both;
 }
 .modal.theme-cafe .product-card::after {
     content: '';
     position: absolute; top: -10px; left: 50%;
     width: 20px; height: 20px;
-    background: radial-gradient(circle, rgba(251, 146, 60, 0.3), transparent);
+    background: radial-gradient(circle, rgba(198, 152, 110, 0.35), transparent);
     border-radius: 50%;
     animation: steam 2s ease-in-out infinite;
     pointer-events: none;
@@ -291,15 +324,17 @@ section { padding: 3.5rem 1.25rem; max-width: 540px; margin: 0 auto; }
     0%, 100% { opacity: 0; transform: translateX(-50%) translateY(0) scale(1); }
     50% { opacity: 0.6; transform: translateX(-50%) translateY(-15px) scale(1.5); }
 }
+.modal.theme-cafe .product-price { color: #c6986e; }
+.modal.theme-cafe .menu-btn.active { background: #a9744f; border-color: #a9744f; }
 
-/* Clothes Theme */
+/* =========================================
+   ТЕМА: ОДЕЖДА (ГЛИТЧ)
+   ========================================= */
 .modal.theme-clothes .mini-header h3 {
     letter-spacing: 0.1em;
     text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
 }
-.modal.theme-clothes .product-name {
-    animation: glitchText 3s infinite;
-}
+.modal.theme-clothes .product-name { animation: glitchText 3s infinite; }
 @keyframes glitchText {
     0%, 90%, 100% { text-shadow: none; }
     92% { text-shadow: 2px 0 #3b82f6, -2px 0 #ec4899; }
@@ -307,23 +342,18 @@ section { padding: 3.5rem 1.25rem; max-width: 540px; margin: 0 auto; }
     96% { text-shadow: 2px 0 #3b82f6, -2px 0 #ec4899; }
 }
 
-/* Tech Theme */
-.modal.theme-tech {
-    font-family: 'Orbitron', sans-serif;
-}
+/* =========================================
+   ТЕМА: ТЕХНИКА (КИБERPANK + МАТРИЦА)
+   ========================================= */
 .modal.theme-tech .mini-header h3 {
     font-family: 'Orbitron', sans-serif;
-    text-shadow: 0 0 20px rgba(6, 182, 212, 0.8), 0 0 40px rgba(6, 182, 212, 0.4);
     animation: techPulse 2s ease-in-out infinite;
 }
 @keyframes techPulse {
     0%, 100% { text-shadow: 0 0 20px rgba(6, 182, 212, 0.8), 0 0 40px rgba(6, 182, 212, 0.4); }
     50% { text-shadow: 0 0 30px rgba(6, 182, 212, 1), 0 0 60px rgba(6, 182, 212, 0.6); }
 }
-.modal.theme-tech .product-card {
-    border: 1px solid rgba(6, 182, 212, 0.2);
-    position: relative;
-}
+.modal.theme-tech .product-card { border: 1px solid rgba(6, 182, 212, 0.2); }
 .modal.theme-tech .product-card::before {
     content: '';
     position: absolute; top: 0; left: -100%;
@@ -331,9 +361,7 @@ section { padding: 3.5rem 1.25rem; max-width: 540px; margin: 0 auto; }
     background: linear-gradient(90deg, transparent, var(--theme-accent), transparent);
     animation: scanLine 2s linear infinite;
 }
-@keyframes scanLine {
-    to { left: 100%; }
-}
+@keyframes scanLine { to { left: 100%; } }
 .modal.theme-tech .product-name {
     font-family: 'Orbitron', sans-serif;
     font-size: 0.7rem;
