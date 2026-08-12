@@ -2,8 +2,8 @@
 const demos = {
     icecream: {
         title: "Gelato Studio",
-        theme: { accent: "#f472b6", glow: "#f9a8d4", bg: "#0c0508", class: "theme-icecream" },
-        particles: { color: "244, 114, 182", count: 30, speed: 0.5 },
+        theme: { accent: "#ec4899", glow: "#f9a8d4", bg: "#fff0f7", class: "theme-icecream" },
+        particles: { type: "snow", color: "96, 165, 250", count: 28 },
         categories: [
             {
                 name: "Классика",
@@ -37,8 +37,8 @@ const demos = {
     },
     cafe: {
         title: "World Kitchen",
-        theme: { accent: "#fb923c", glow: "#fdba74", bg: "#0a0805", class: "theme-cafe" },
-        particles: { color: "251, 146, 60", count: 20, speed: 0.3 },
+        theme: { accent: "#a9744f", glow: "#e6cbb4", bg: "#150b07", class: "theme-cafe" },
+        particles: { type: "beans", color: "198, 152, 110", count: 14 },
         categories: [
             {
                 name: "Горячее",
@@ -52,7 +52,7 @@ const demos = {
             },
             {
                 name: "Азия",
-                subs: ["Суши", "Лапша", "Супы"],
+                subs: ["Суши", "Супы"],
                 products: [
                     { name: "Филадельфия", price: "650 ₽", sub: "Суши", img: "images/cafe_sushi.jpg" },
                     { name: "Том Ям", price: "420 ₽", sub: "Супы", img: "images/cafe_soup.jpg" },
@@ -63,19 +63,19 @@ const demos = {
                 subs: ["Классика", "Авторские"],
                 products: [
                     { name: "Цезарь", price: "350 ₽", sub: "Классика", img: "images/cafe_salad.jpg" },
-                    { name: "Греческий", price: "320 ₽", sub: "Классика", img: "images/cafe_salad.jpg" },
+                    { name: "Греческий", price: "320 ₽", sub: "Авторские", img: "images/cafe_salad.jpg" },
                 ]
             },
             {
                 name: "Десерты",
-                subs: ["Торты", "Мороженое"],
+                subs: ["Торты"],
                 products: [
                     { name: "Тирамису", price: "280 ₽", sub: "Торты", img: "images/cafe_tiramisu.jpg" },
                 ]
             },
             {
                 name: "Напитки",
-                subs: ["Кофе", "Соки", "Чай"],
+                subs: ["Кофе", "Соки"],
                 products: [
                     { name: "Капучино", price: "180 ₽", sub: "Кофе", img: "images/cafe_coffee.jpg" },
                     { name: "Апельсиновый сок", price: "150 ₽", sub: "Соки", img: "images/cafe_juice.jpg" },
@@ -86,7 +86,7 @@ const demos = {
     clothes: {
         title: "Urban Style",
         theme: { accent: "#3b82f6", glow: "#93c5fd", bg: "#050810", class: "theme-clothes" },
-        particles: { color: "59, 130, 246", count: 25, speed: 0.4 },
+        particles: { type: "float", color: "59, 130, 246", count: 25, speed: 0.4 },
         categories: [
             {
                 name: "Верх",
@@ -121,7 +121,7 @@ const demos = {
     tech: {
         title: "TechStore",
         theme: { accent: "#06b6d4", glow: "#67e8f9", bg: "#050a0c", class: "theme-tech" },
-        particles: { color: "6, 182, 212", count: 40, speed: 0.8 },
+        particles: { type: "matrix", color: "6, 182, 212" },
         categories: [
             {
                 name: "Смартфоны",
@@ -170,40 +170,17 @@ const preloader = document.getElementById('preloader');
 const canvas = document.getElementById('particleCanvas');
 const ctx = canvas.getContext('2d');
 
-// === ЧАСТИЦЫ ===
-function initParticles(config) {
+// ==========================================
+// СИСТЕМА ЧАСТИЦ (4 ТИПА)
+// ==========================================
+function initParticles(cfg) {
     cancelAnimationFrame(particleAnimation);
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    
-    const particles = [];
-    for (let i = 0; i < config.count; i++) {
-        particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            vx: (Math.random() - 0.5) * config.speed,
-            vy: (Math.random() - 0.5) * config.speed,
-            size: Math.random() * 3 + 1,
-            alpha: Math.random() * 0.5 + 0.2
-        });
-    }
-
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach(p => {
-            p.x += p.vx;
-            p.y += p.vy;
-            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-            
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(${config.color}, ${p.alpha})`;
-            ctx.fill();
-        });
-        particleAnimation = requestAnimationFrame(animate);
-    }
-    animate();
+    if (cfg.type === 'snow') return snowLoop(cfg);
+    if (cfg.type === 'beans') return beansLoop(cfg);
+    if (cfg.type === 'matrix') return matrixLoop(cfg);
+    floatLoop(cfg);
 }
 
 function stopParticles() {
@@ -211,7 +188,142 @@ function stopParticles() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-// === ТЕМА ===
+// --- СНЕЖИНКИ (падают, качаются, крутятся) ---
+function snowLoop(cfg) {
+    const flakes = Array.from({ length: cfg.count }, () => newFlake(true));
+    function newFlake(anyY) {
+        return {
+            x: Math.random() * canvas.width,
+            y: anyY ? Math.random() * canvas.height : -20,
+            s: Math.random() * 10 + 8,
+            v: Math.random() * 1 + 0.5,
+            sway: Math.random() * Math.PI * 2,
+            rot: Math.random() * Math.PI,
+            vr: (Math.random() - 0.5) * 0.02,
+            a: Math.random() * 0.5 + 0.3
+        };
+    }
+    function step() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        flakes.forEach(f => {
+            f.y += f.v;
+            f.sway += 0.01;
+            f.rot += f.vr;
+            f.x += Math.sin(f.sway) * 0.5;
+            if (f.y > canvas.height + 20) Object.assign(f, newFlake(false));
+            ctx.save();
+            ctx.translate(f.x, f.y);
+            ctx.rotate(f.rot);
+            ctx.font = f.s + 'px serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = `rgba(${cfg.color}, ${f.a})`;
+            ctx.fillText('❄\uFE0E', 0, 0);
+            ctx.restore();
+        });
+        particleAnimation = requestAnimationFrame(step);
+    }
+    step();
+}
+
+// --- КОФЕЙНЫЕ ЗЁРНА (всплывают как аромат) ---
+function beansLoop(cfg) {
+    const beans = Array.from({ length: cfg.count }, () => newBean(true));
+    function newBean(anyY) {
+        return {
+            x: Math.random() * canvas.width,
+            y: anyY ? Math.random() * canvas.height : canvas.height + 20,
+            s: Math.random() * 6 + 4,
+            v: Math.random() * 0.6 + 0.2,
+            rot: Math.random() * Math.PI,
+            vr: (Math.random() - 0.5) * 0.01,
+            a: Math.random() * 0.4 + 0.15
+        };
+    }
+    function drawBean(b) {
+        ctx.save();
+        ctx.translate(b.x, b.y);
+        ctx.rotate(b.rot);
+        ctx.strokeStyle = `rgba(${cfg.color}, ${b.a})`;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, b.s, b.s * 0.7, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, -b.s * 0.7);
+        ctx.quadraticCurveTo(b.s * 0.5, 0, 0, b.s * 0.7);
+        ctx.stroke();
+        ctx.restore();
+    }
+    function step() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        beans.forEach(b => {
+            b.y -= b.v;
+            b.rot += b.vr;
+            if (b.y < -20) Object.assign(b, newBean(false));
+            drawBean(b);
+        });
+        particleAnimation = requestAnimationFrame(step);
+    }
+    step();
+}
+
+// --- МАТРИЦА (бегущие глифы) ---
+function matrixLoop(cfg) {
+    const fontSize = 14;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = Array.from({ length: columns }, () => Math.random() * -50);
+    const chars = "01アカサタナハマヤラワXYZ<>*+=ﾑｱｳｴｵｶｷｸｹｺ";
+    function step() {
+        // Растворение старых символов (шлейф)
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.globalCompositeOperation = 'source-over';
+
+        ctx.font = fontSize + 'px monospace';
+        for (let i = 0; i < drops.length; i++) {
+            const char = chars[Math.floor(Math.random() * chars.length)];
+            const y = drops[i] * fontSize;
+            ctx.fillStyle = `rgba(${cfg.color}, 0.85)`;
+            ctx.fillText(char, i * fontSize, y);
+            if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        }
+        particleAnimation = requestAnimationFrame(step);
+    }
+    step();
+}
+
+// --- ТОЧКИ (одежда) ---
+function floatLoop(cfg) {
+    const dots = Array.from({ length: cfg.count }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * cfg.speed,
+        vy: (Math.random() - 0.5) * cfg.speed,
+        size: Math.random() * 3 + 1,
+        alpha: Math.random() * 0.5 + 0.2
+    }));
+    function step() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        dots.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${cfg.color}, ${p.alpha})`;
+            ctx.fill();
+        });
+        particleAnimation = requestAnimationFrame(step);
+    }
+    step();
+}
+
+// ==========================================
+// ТЕМА
+// ==========================================
 function applyTheme(theme) {
     const root = document.documentElement;
     root.style.setProperty('--theme-accent', theme.accent);
@@ -228,21 +340,23 @@ function resetTheme() {
     modal.className = 'modal';
 }
 
-// === ОТКРЫТИЕ / ЗАКРЫТИЕ ===
+// ==========================================
+// ОТКРЫТИЕ / ЗАКРЫТИЕ
+// ==========================================
 function openDemo(key) {
     currentDemo = demos[key];
     currentCatIdx = 0;
     currentSub = "Все";
-    
+
     applyTheme(currentDemo.theme);
     initParticles(currentDemo.particles);
     miniTitle.textContent = currentDemo.title;
     miniSearch.value = "";
-    
+
     renderMainMenu();
     renderSubMenu();
     renderProducts();
-    
+
     modal.classList.add('open');
     document.body.style.overflow = 'hidden';
 }
@@ -255,7 +369,9 @@ function closeDemo() {
     currentDemo = null;
 }
 
-// === РЕНДЕР МЕНЮ ===
+// ==========================================
+// РЕНДЕР МЕНЮ
+// ==========================================
 function renderMainMenu() {
     mainMenu.innerHTML = '';
     currentDemo.categories.forEach((cat, idx) => {
@@ -277,7 +393,7 @@ function renderMainMenu() {
 function renderSubMenu() {
     subMenu.innerHTML = '';
     const cat = currentDemo.categories[currentCatIdx];
-    
+
     const allBtn = document.createElement('button');
     allBtn.className = `menu-btn ${currentSub === "Все" ? 'active' : ''}`;
     allBtn.textContent = "Все";
@@ -294,10 +410,13 @@ function renderSubMenu() {
     });
 }
 
+// ==========================================
+// РЕНДЕР ТОВАРОВ + ЗАГЛУШКА ФОТО
+// ==========================================
 function renderProducts(filter = "") {
     miniProducts.innerHTML = '';
     const cat = currentDemo.categories[currentCatIdx];
-    
+
     const filtered = cat.products.filter(p => {
         const matchSub = currentSub === "Все" || p.sub === currentSub;
         const matchSearch = p.name.toLowerCase().includes(filter.toLowerCase());
@@ -320,11 +439,17 @@ function renderProducts(filter = "") {
             <div class="product-name">${p.name}</div>
             <div class="product-price">${p.price}</div>
         `;
+        const img = card.querySelector('img');
+        img.addEventListener('error', () => {
+            card.querySelector('.product-img').classList.add('no-img');
+        });
         miniProducts.appendChild(card);
     });
 }
 
-// === EVENT LISTENERS ===
+// ==========================================
+// EVENT LISTENERS
+// ==========================================
 document.querySelectorAll('.demo-card').forEach(card => {
     card.addEventListener('click', () => openDemo(card.dataset.demo));
 });
@@ -340,13 +465,12 @@ document.addEventListener('keydown', (e) => {
 });
 
 window.addEventListener('resize', () => {
-    if (currentDemo) {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
+    if (currentDemo) initParticles(currentDemo.particles);
 });
 
-// === SCROLL REVEAL ===
+// ==========================================
+// SCROLL REVEAL + СКРОЛЛ
+// ==========================================
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -368,7 +492,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 document.addEventListener('contextmenu', event => event.preventDefault());
 
-// === ПРЕДЗАГРУЗКА ФОТО ===
+// ==========================================
+// ПРЕДЗАГРУЗКА ФОТО
+// ==========================================
 function preloadAllImages() {
     const allUrls = [];
     Object.values(demos).forEach(demo => {
@@ -376,10 +502,10 @@ function preloadAllImages() {
             cat.products.forEach(p => allUrls.push(p.img));
         });
     });
-    
+
     let loaded = 0;
     const total = allUrls.length;
-    
+
     return new Promise((resolve) => {
         if (total === 0) { resolve(); return; }
         allUrls.forEach(url => {
