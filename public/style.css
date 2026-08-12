@@ -23,6 +23,7 @@ body {
     -webkit-user-select: none;
     user-select: none;
     -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* === PRELOADER === */
@@ -150,6 +151,7 @@ section { padding: 3.5rem 1.25rem; max-width: 540px; margin: 0 auto; }
     height: 100%; display: flex; flex-direction: column;
     padding: 0 1rem 1rem; overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
     z-index: 1;
 }
 
@@ -241,7 +243,6 @@ section { padding: 3.5rem 1.25rem; max-width: 540px; margin: 0 auto; }
 }
 .product-card:active .product-img img { transform: scale(1.08); }
 
-/* Заглушка если фото не загрузилось */
 .product-img.no-img { background: linear-gradient(135deg, color-mix(in srgb, var(--theme-accent) 25%, transparent), transparent); }
 .product-img.no-img img { display: none; }
 .product-img.no-img::after {
@@ -269,7 +270,7 @@ section { padding: 3.5rem 1.25rem; max-width: 540px; margin: 0 auto; }
 .product-card:nth-child(6) { animation-delay: 0.3s; }
 
 /* =========================================
-   ТЕМА: МОРОЖЕНОЕ (СВЕТЛАЯ + СНЕЖИНКИ)
+   МОРОЖЕНОЕ: СВЕТЛАЯ ТЕМА, СНЕЖИНКИ, PACIFICO
    ========================================= */
 .modal.theme-icecream {
     --surface: rgba(255, 255, 255, 0.65);
@@ -279,13 +280,23 @@ section { padding: 3.5rem 1.25rem; max-width: 540px; margin: 0 auto; }
     background: linear-gradient(180deg, #fff7fb 0%, #ffe8f3 60%, #ffe0ee 100%);
 }
 .modal.theme-icecream .mini-header h3 {
+    font-family: 'Pacifico', cursive;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 1.5rem;
     text-shadow: 0 0 20px rgba(244, 114, 182, 0.35);
+    animation: titleDrop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
+@keyframes titleDrop {
+    from { opacity: 0; transform: translateY(-30px) scale(0.8) rotate(-4deg); }
+    to { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+}
+/* ЧЁРНЫЙ ШРИФТ КАТЕГОРИЙ И ПОДКАТЕГОРИЙ */
+.modal.theme-icecream .menu-btn { color: #111111; background: rgba(255, 255, 255, 0.85); }
+.modal.theme-icecream .menu-btn.active { color: #ffffff; }
 .modal.theme-icecream .mini-header input { color: #55224a; background: rgba(255,255,255,0.85); }
 .modal.theme-icecream .mini-header input::placeholder { color: #a0688c; }
 .modal.theme-icecream .modal-close { color: #55224a; background: rgba(255,255,255,0.85); }
-.modal.theme-icecream .menu-btn { background: rgba(255,255,255,0.75); }
-.modal.theme-icecream .menu-btn.active { color: #fff; }
 .modal.theme-icecream .product-card { background: rgba(255,255,255,0.8); }
 .modal.theme-icecream .product-card::before {
     content: '';
@@ -296,20 +307,24 @@ section { padding: 3.5rem 1.25rem; max-width: 540px; margin: 0 auto; }
 .modal.theme-icecream .product-img { background: rgba(85, 34, 74, 0.05); }
 
 /* =========================================
-   ТЕМА: КАФЕ (КОФЕЙНАЯ ПАЛИТРА + ЗЁРНА)
+   КАФЕ: КОФЕЙНАЯ ПАЛИТРА, PLAYFAIR, ЗЁРНА
    ========================================= */
 .modal.theme-cafe {
     background: radial-gradient(circle at 50% 0%, #2a1710 0%, #150b07 60%);
 }
 .modal.theme-cafe .mini-header h3 {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'Playfair Display', serif;
     text-transform: none;
-    letter-spacing: 0.02em;
+    font-size: 1.5rem;
     background: linear-gradient(180deg, #ffffff 0%, #e6cbb4 45%, #a9744f 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: none;
-    animation: fadeSlideDown 0.5s ease both;
+    animation: titleFade 1s ease both;
+}
+@keyframes titleFade {
+    from { opacity: 0; letter-spacing: 0.4em; transform: translateY(-10px); }
+    to { opacity: 1; letter-spacing: 0.02em; transform: translateY(0); }
 }
 .modal.theme-cafe .product-card::after {
     content: '';
@@ -328,11 +343,20 @@ section { padding: 3.5rem 1.25rem; max-width: 540px; margin: 0 auto; }
 .modal.theme-cafe .menu-btn.active { background: #a9744f; border-color: #a9744f; }
 
 /* =========================================
-   ТЕМА: ОДЕЖДА (ГЛИТЧ)
+   ОДЕЖДА: SYNE, ГЛИТЧ
    ========================================= */
 .modal.theme-clothes .mini-header h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
     letter-spacing: 0.1em;
     text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+    animation: glitchIn 0.6s steps(3, jump-none) both;
+}
+@keyframes glitchIn {
+    0% { opacity: 0; transform: translateX(-10px) skewX(-12deg); }
+    40% { opacity: 1; transform: translateX(5px) skewX(8deg); }
+    70% { transform: translateX(-3px) skewX(-3deg); }
+    100% { opacity: 1; transform: none; }
 }
 .modal.theme-clothes .product-name { animation: glitchText 3s infinite; }
 @keyframes glitchText {
@@ -343,11 +367,19 @@ section { padding: 3.5rem 1.25rem; max-width: 540px; margin: 0 auto; }
 }
 
 /* =========================================
-   ТЕМА: ТЕХНИКА (КИБERPANK + МАТРИЦА)
+   ТЕХНИКА: ORBITRON, МАТРИЦА, FLICKER
    ========================================= */
 .modal.theme-tech .mini-header h3 {
     font-family: 'Orbitron', sans-serif;
-    animation: techPulse 2s ease-in-out infinite;
+    animation: flickerIn 0.9s steps(4) both, techPulse 2s 1s infinite;
+}
+@keyframes flickerIn {
+    0% { opacity: 0; }
+    30% { opacity: 0.8; }
+    45% { opacity: 0.2; }
+    60% { opacity: 1; }
+    75% { opacity: 0.5; }
+    100% { opacity: 1; }
 }
 @keyframes techPulse {
     0%, 100% { text-shadow: 0 0 20px rgba(6, 182, 212, 0.8), 0 0 40px rgba(6, 182, 212, 0.4); }
