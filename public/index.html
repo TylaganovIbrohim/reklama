@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Manrope:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Manrope:wght@300;500;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="preloader" class="preloader">
@@ -23,7 +23,7 @@
         <section class="hero reveal">
             <span class="tag pulse-tag">Web-разработка</span>
             <h1>Ваш товар<br><span class="gradient-text">в телефоне</span></h1>
-            <p class="subtitle">Создаю удобные сайты-каталоги и <strong>QR-code menu</strong>. Нажмите на проект ниже, чтобы увидеть функционал.</p>
+            <p class="subtitle">Создаю удобные сайты-каталоги и <strong>QR-code menu</strong>. Удобство и современность для увеличения клиентов и покупателей.</p>
             <a href="#portfolio" class="btn-primary glow-btn">Смотреть демо</a>
         </section>
 
@@ -58,11 +58,11 @@
                     <h3>Мороженое</h3>
                     <p>Каталог десертов</p>
                 </div>
-                <div class="demo-card tilt-card" data-demo="chinese">
+                <div class="demo-card tilt-card" data-demo="cafe">
                     <div class="card-glow"></div>
-                    <svg class="demo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 11h18M5 11v6a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4v-6"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><line x1="12" y1="3" x2="12" y2="7"/></svg>
-                    <h3>Китайская кухня</h3>
-                    <p>QR-code меню</p>
+                    <svg class="demo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                    <h3>Кафе</h3>
+                    <p>Мультикухня</p>
                 </div>
                 <div class="demo-card tilt-card" data-demo="clothes">
                     <div class="card-glow"></div>
@@ -106,6 +106,7 @@
     </main>
 
     <div id="demoModal" class="modal">
+        <canvas id="particleCanvas" class="particle-canvas"></canvas>
         <div class="modal-layout">
             <button class="modal-close spin-close" aria-label="Закрыть">&times;</button>
             <header class="mini-header">
